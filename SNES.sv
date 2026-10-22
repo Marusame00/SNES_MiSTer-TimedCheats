@@ -207,6 +207,15 @@ parameter CONF_STR = {
 	"P3oCD,Initial ARAM,9966(SNES2),00FF(SNES1),55(SD2SNES),FF;",
 
 	"-;",
+	"P4,Timed Cheats;",
+	"P4-;",
+	"P4O[58],On-Screen Timer,Off,On;",
+	"P4O[59],Timed Cheats,Off,On;",
+	"P4O[62:60],Timed Delay,5 Sec,10 Sec,30 Sec,1 Min,5 Min,10 Min,15 Min,20 Min;",
+	"P4O[63],Immediate Cheats,First 1,First 2;",
+	"P4O[49],Cycle Timed Cheats,Off,On;",
+
+	"-;",
 	"R0,Reset;",
 	"J1,A(SS Fire),B(SS Cursor),X(SS TurboSw),Y(SS Pause),LT(SS Cursor),RT(SS Fire),Select,Start,SaveState;",
 	"I,",
@@ -326,6 +335,20 @@ wire       BLEND = ~status[16];
 wire [1:0] mouse_mode = status[6:5];
 wire       joy_swap = status[7] | piano;
 wire [2:0] LHRom_type = status[3:1];
+
+wire       show_timer      = status[58];
+wire       timed_cheats_en = status[59];
+wire [2:0] timed_delay_sel = status[62:60];
+wire       timed_split_sel = status[63];
+wire       timed_cycle_en  = status[49];
+wire [31:0] gg_timed_gate;
+
+reg rom_loaded = 0;
+reg cart_download_d;
+always @(posedge clk_sys) begin
+	cart_download_d <= cart_download;
+	if (cart_download_d && !cart_download) rom_loaded <= 1;
+end
 
 wire code_index = &ioctl_index;
 wire code_download = ioctl_download & code_index;
@@ -546,6 +569,7 @@ main main
 	.GG_CODE(gg_code),
 	.GG_RESET((code_download && ioctl_wr && !ioctl_addr) || cart_download),
 	.GG_AVAILABLE(gg_available),
+	.GG_TIMED_GATE(gg_timed_gate),
 	
 	.SPC_MODE(spc_mode),
 
@@ -938,15 +962,47 @@ wire [2:0] scale = status[11:9];
 wire [2:0] sl = scale ? scale - 1'd1 : 3'd0;
 wire       scandoubler = ~interlace && (scale || forced_scandoubler);
 
+wire [7:0] R_lg = (LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[0]}} : R;
+wire [7:0] G_lg = (LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[1]}} : G;
+wire [7:0] B_lg = (LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[2]}} : B;
+
+wire [7:0] R_ov, G_ov, B_ov;
+
+osd_timer osd_timer
+(
+	.clk_video(CLK_VIDEO),
+	.ce_pix(ce_pix),
+	.HBlank(HBlank),
+	.VBlank(VBlank),
+	.hires(HIGH_RES),
+
+	.clk_sys(clk_sys),
+	.clk_rate(PAL ? 32'd21281370 : 32'd21477270),
+	.reset(reset),
+	.game_loaded(rom_loaded),
+	.osd_status(OSD_STATUS),
+
+	.show_timer(show_timer),
+	.timed_cheats_en(timed_cheats_en),
+	.delay_sel(timed_delay_sel),
+	.split_sel(timed_split_sel),
+	.cycle_en(timed_cycle_en),
+
+	.R_in(R_lg), .G_in(G_lg), .B_in(B_lg),
+	.R_out(R_ov), .G_out(G_ov), .B_out(B_ov),
+
+	.timed_gate(gg_timed_gate)
+);
+
 video_mixer #(.LINE_LENGTH(520), .GAMMA(1)) video_mixer
 (
 	.*,
 	.hq2x(scale==1),
 	.freeze_sync(),
 	.VGA_DE(vga_de),
-	.R((LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[0]}} : R),
-	.G((LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[1]}} : G),
-	.B((LG_TARGET && GUN_MODE && (!status[29] | LG_T)) ? {8{LG_TARGET[2]}} : B)
+	.R(R_ov),
+	.G(G_ov),
+	.B(B_ov)
 );
 
 ////////////////////////////  I/O PORTS  ////////////////////////////////

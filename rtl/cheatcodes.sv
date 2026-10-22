@@ -16,7 +16,12 @@ module CODES(
 	input  [DATA_WIDTH - 1:0] data_in,
 	input  [128:0] code,
 	output genie_ovr,
-	output [DATA_WIDTH - 1:0] genie_data
+	output [DATA_WIDTH - 1:0] genie_data,
+
+	// Timed Cheats: per-slot gate (1 = this code's load-order slot may fire now).
+	// Slot index == the code's position in the `codes[]` array (load order).
+	// The only instantiation site (SNES.vhd) always drives this explicitly.
+	input  [MAX_CODES-1:0] timed_gate
 );
 
 parameter ADDR_WIDTH   = 16; // Not more than 32
@@ -88,7 +93,7 @@ always_comb begin
 
 	if (enable) begin
 		for (x = 0; x < MAX_CODES; x = x + 1) begin
-			if (codes[x][ENA_F_S] && codes[x][ADDR_S-:ADDR_WIDTH] == addr_in) begin
+			if (codes[x][ENA_F_S] && timed_gate[x] && codes[x][ADDR_S-:ADDR_WIDTH] == addr_in) begin
 				if (!codes[x][COMP_F_S] || (codes[x][COMP_S-:DATA_WIDTH] == data_in)) begin
 					genie_ovr = 1;
 					genie_data = codes[x][DATA_S-:DATA_WIDTH];

@@ -12,6 +12,7 @@ set_global_assignment -name VHDL_FILE rtl/DSP.vhd
 set_global_assignment -name VHDL_FILE rtl/SNES.vhd
 set_global_assignment -name VERILOG_FILE rtl/main.v
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/cheatcodes.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/osd_timer.sv
 set_global_assignment -name VHDL_FILE rtl/bram.vhd
 set_global_assignment -name VHDL_FILE rtl/mlab.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE rtl/ddram.sv

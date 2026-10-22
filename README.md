@@ -9,6 +9,7 @@ Written by [srg320](https://github.com/srg320)
 * MSU-1 Support (1GB max).
 * Save states support incl chips SA1, DSP and SuperFX.
 * Cheat engine.
+* **Timed Cheats** — gate, delay and cycle your cheat loads on a timer, plus an on-screen elapsed-time overlay (see [TimedCheats.md](TimedCheats.md)).
 * Save/Load Backup RAM.
 * Supports mouse.
 * Light gun support via Wiimote, mouse or analog stick.

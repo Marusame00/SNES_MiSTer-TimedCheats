@@ -34,6 +34,11 @@ entity SNES is
 		REFRESH		: out std_logic;
 		
 		IRQ_N			: in std_logic;
+
+		-- Timed Cheats: per-slot gate for the Game Genie code list (bit N = load-order
+		-- slot N may fire now). Defaults to all-enabled so existing instantiations
+		-- behave exactly as before.
+		GG_TIMED_GATE	: in std_logic_vector(31 downto 0) := (others => '1');
 		
 		WSRAM_ADDR	: out std_logic_vector(16 downto 0);
 		WSRAM_D		: out std_logic_vector(7 downto 0);
@@ -190,7 +195,8 @@ architecture rtl of SNES is
 			code        : in  std_logic_vector(128 downto 0);
 			available   : out std_logic;
 			genie_ovr   : out std_logic;
-			genie_data  : out std_logic_vector(7 downto 0)
+			genie_data  : out std_logic_vector(7 downto 0);
+			timed_gate  : in  std_logic_vector(31 downto 0) := (others => '1')
 		);
 	end component;
 
@@ -211,7 +217,8 @@ begin
 		code => GG_CODE,
 		available => GG_AVAILABLE,
 		genie_ovr => GENIE,
-		genie_data => GENIE_DO
+		genie_data => GENIE_DO,
+		timed_gate => GG_TIMED_GATE
 	);
 	
 	GENIE_DI <= GENIE_DO when GENIE = '1' else CPU_DI;

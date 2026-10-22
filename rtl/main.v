@@ -90,6 +90,7 @@ module main (
 	input     [128:0] GG_CODE,
 	input             GG_RESET,
 	output            GG_AVAILABLE,
+	input      [31:0] GG_TIMED_GATE,
 
 	input             SPC_MODE,
 
@@ -259,6 +260,7 @@ SNES SNES
 	.gg_code(GG_CODE),
 	.gg_reset(GG_RESET),
 	.gg_available(GG_AVAILABLE),
+	.gg_timed_gate(GG_TIMED_GATE),
 	
 	.spc_mode(SPC_MODE),
 	

@@ -86,3 +86,12 @@ flicks on for 5 s, off for 5 s, repeating — while `invincibility` stays on the
   are out of scope for this version — the featured roadmap idea, not yet built.
 - The on-screen timer counts *elapsed play time*, not wall clock; it is independent
   of the RTC and any RTC battery state.
+
+## AI Disclosure
+
+This feature fork was developed collaboratively by the repository owner with
+assistance from an AI coding assistant (RTL logic, OSD integration and this
+documentation). All contributions, including the AI-assisted ones, are licensed
+under the GPL-3.0 license of the upstream core and are verified by the owner on
+real MiSTer hardware.
+

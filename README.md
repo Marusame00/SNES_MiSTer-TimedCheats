@@ -19,3 +19,13 @@ Written by [srg320](https://github.com/srg320)
 * Copy \*.rbf to root of SD card. Put some ROMs (\*.SFC, \*.SMC, \*.BIN) into games\SNES folder.
 * Save states: Place [boot1.rom](https://github.com/MiSTer-devel/SNES_MiSTer/raw/master/releases/boot1.rom) in games\SNES folder.
 * BSX: Place bsx_bios.rom in games\SNES folder.
+
+## AI Disclosure
+This is a hobby/“for fun” fork of the GPL-3.0 SNES_MiSTer core. The **Timed
+Cheats** feature (OSD page, VHDL/SystemVerilog gating logic, on-screen timer
+overlay, and supporting docs) was developed collaboratively with assistance from
+an AI coding assistant. The result is licensed under the same GPL-3.0 terms as
+the upstream core (see [LICENSE](LICENSE)); the AI-generated portions of this fork
+are provided under those same terms. Testing and validation was performed by the
+repository owner on real MiSTer hardware.
+
